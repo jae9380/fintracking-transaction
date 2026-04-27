@@ -1,0 +1,19 @@
+package com.ft.transaction.config;
+
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class SwaggerConfig {
+
+    @Bean
+    public OpenAPI openAPI() {
+        return new OpenAPI()
+                .info(new Info()
+                        .title("Transaction Service API")
+                        .description("거래 내역 CRUD, 카테고리 관리, Kafka 이벤트 발행")
+                        .version("v1.0.0"));
+    }
+}
