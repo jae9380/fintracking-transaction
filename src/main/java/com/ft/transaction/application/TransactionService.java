@@ -30,10 +30,12 @@ public class TransactionService {
 
     @Transactional
     public TransactionResult create(Long userId, CreateTransactionCommand command) {
+        String categoryName = null;
         if (command.categoryId() != null) {
             Category category = categoryRepository.findById(command.categoryId())
                     .orElseThrow(() -> new CustomException(TRANSACTION_NOT_FOUND));
             category.validateAccessible(userId);
+            categoryName = category.getName();
         }
 
         Transaction transaction = Transaction.create(
@@ -58,6 +60,7 @@ public class TransactionService {
                 command.amount(),
                 command.type().name(),
                 command.categoryId(),
+                categoryName,
                 LocalDateTime.now()
         ));
 
