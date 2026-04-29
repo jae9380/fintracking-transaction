@@ -14,7 +14,7 @@ public class TransactionEventPublisher extends AbstractEventPublisher<Transactio
     }
 
     @Override
-    protected String topic() {
+    public String topic() {
         return KafkaTopic.TRANSACTION_CREATED;
     }
 }

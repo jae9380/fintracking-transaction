@@ -2,6 +2,7 @@ package com.ft.transaction.application;
 
 import com.ft.common.event.TransactionCreatedEvent;
 import com.ft.common.exception.CustomException;
+import com.ft.common.metric.annotation.Monitored;
 import com.ft.transaction.application.dto.CreateTransactionCommand;
 import com.ft.transaction.application.dto.TransactionResult;
 import com.ft.transaction.application.dto.UpdateTransactionCommand;
@@ -28,6 +29,7 @@ public class TransactionService {
     private final CategoryRepository categoryRepository;
     private final TransactionEventPublisher eventPublisher;
 
+    @Monitored(domain = "transaction", layer = "service", api = "create")
     @Transactional
     public TransactionResult create(Long userId, CreateTransactionCommand command) {
         String categoryName = null;
@@ -67,6 +69,7 @@ public class TransactionService {
         return result;
     }
 
+    @Monitored(domain = "transaction", layer = "service", api = "find_all")
     @Transactional(readOnly = true)
     public List<TransactionResult> findAll(Long userId, Long accountId) {
         List<Transaction> transactions = accountId != null
@@ -75,6 +78,7 @@ public class TransactionService {
         return transactions.stream().map(TransactionResult::from).toList();
     }
 
+    @Monitored(domain = "transaction", layer = "service", api = "find_by_id")
     @Transactional(readOnly = true)
     public TransactionResult findById(Long userId, Long transactionId) {
         Transaction transaction = getTransaction(transactionId);
@@ -82,6 +86,7 @@ public class TransactionService {
         return TransactionResult.from(transaction);
     }
 
+    @Monitored(domain = "transaction", layer = "service", api = "update")
     @Transactional
     public TransactionResult update(Long userId, Long transactionId, UpdateTransactionCommand command) {
         Transaction transaction = getTransaction(transactionId);
@@ -100,6 +105,7 @@ public class TransactionService {
         return TransactionResult.from(transaction);
     }
 
+    @Monitored(domain = "transaction", layer = "service", api = "delete")
     @Transactional
     public void delete(Long userId, Long transactionId) {
         Transaction transaction = getTransaction(transactionId);
