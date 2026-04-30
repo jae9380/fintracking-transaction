@@ -62,6 +62,7 @@ public class Transaction extends BaseEntity {
                                      String description, LocalDate transactionDate) {
         validateAmount(amount);
         validateCategory(type, categoryId);
+        validateTransfer(type, toAccountId);
         return new Transaction(userId, accountId, toAccountId, categoryId, type, amount, description, transactionDate);
     }
 
@@ -95,6 +96,13 @@ public class Transaction extends BaseEntity {
     private static void validateCategory(TransactionType type, Long categoryId) {
         if (type != TransactionType.TRANSFER && categoryId == null) {
             throw new CustomException(TRANSACTION_CATEGORY_REQUIRED);
+        }
+    }
+
+    // TRANSFER 거래는 대상 계좌 필수
+    private static void validateTransfer(TransactionType type, Long toAccountId) {
+        if (type == TransactionType.TRANSFER && toAccountId == null) {
+            throw new CustomException(TRANSACTION_INVALID_TRANSFER);
         }
     }
 
