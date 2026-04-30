@@ -36,7 +36,7 @@ public class CategoryService {
     @Transactional
     public void delete(Long userId, Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new CustomException(TRANSACTION_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(TRANSACTION_CATEGORY_NOT_FOUND));
         category.validateAccessible(userId);
         if (category.isDefault()) {
             throw new CustomException(TRANSACTION_NO_ACCESS);

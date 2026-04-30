@@ -35,7 +35,7 @@ public class TransactionService {
         String categoryName = null;
         if (command.categoryId() != null) {
             Category category = categoryRepository.findById(command.categoryId())
-                    .orElseThrow(() -> new CustomException(TRANSACTION_NOT_FOUND));
+                    .orElseThrow(() -> new CustomException(TRANSACTION_CATEGORY_NOT_FOUND));
             category.validateAccessible(userId);
             categoryName = category.getName();
         }
