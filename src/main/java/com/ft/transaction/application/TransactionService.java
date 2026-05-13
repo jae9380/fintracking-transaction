@@ -111,6 +111,16 @@ public class TransactionService {
     @Monitored(domain = "transaction", layer = "service", api = "delete")
     @Transactional
     public void delete(Long userId, Long transactionId) {
+        deleteOne(userId, transactionId);
+    }
+
+    @Monitored(domain = "transaction", layer = "service", api = "delete_all")
+    @Transactional
+    public void deleteAll(Long userId, List<Long> ids) {
+        ids.forEach(id -> deleteOne(userId, id));
+    }
+
+    private void deleteOne(Long userId, Long transactionId) {
         Transaction transaction = getTransaction(transactionId);
         transaction.validateOwner(userId);
 

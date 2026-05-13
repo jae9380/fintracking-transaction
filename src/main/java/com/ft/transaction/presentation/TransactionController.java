@@ -3,6 +3,7 @@ package com.ft.transaction.presentation;
 import com.ft.common.response.ApiResponse;
 import com.ft.transaction.application.TransactionService;
 import com.ft.transaction.presentation.dto.CreateTransactionRequest;
+import com.ft.transaction.presentation.dto.DeleteTransactionsRequest;
 import com.ft.transaction.presentation.dto.TransactionResponse;
 import com.ft.transaction.presentation.dto.UpdateTransactionRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -65,6 +66,15 @@ public class TransactionController {
             @RequestHeader("X-User-Id") Long userId,
             @PathVariable Long transactionId) {
         transactionService.delete(userId, transactionId);
+        return ApiResponse.noContent();
+    }
+
+    @Operation(summary = "거래 선택 삭제")
+    @DeleteMapping("/bulk")
+    public ApiResponse<Void> deleteAll(
+            @RequestHeader("X-User-Id") Long userId,
+            @Valid @RequestBody DeleteTransactionsRequest request) {
+        transactionService.deleteAll(userId, request.ids());
         return ApiResponse.noContent();
     }
 }
