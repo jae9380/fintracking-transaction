@@ -1,6 +1,7 @@
 package com.ft.transaction.application;
 
 import com.ft.common.event.TransactionCreatedEvent;
+import com.ft.common.event.TransactionDeletedEvent;
 import com.ft.common.exception.CustomException;
 import com.ft.common.metric.annotation.Monitored;
 import com.ft.transaction.application.dto.CreateTransactionCommand;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,6 +30,7 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final CategoryRepository categoryRepository;
     private final TransactionEventPublisher eventPublisher;
+    private final TransactionDeletedEventPublisher deletedEventPublisher;
 
     @Monitored(domain = "transaction", layer = "service", api = "create")
     @Transactional
@@ -110,7 +113,21 @@ public class TransactionService {
     public void delete(Long userId, Long transactionId) {
         Transaction transaction = getTransaction(transactionId);
         transaction.validateOwner(userId);
+
+        TransactionDeletedEvent event = new TransactionDeletedEvent(
+                UUID.randomUUID().toString(),
+                transaction.getUserId(),
+                transaction.getAccountId(),
+                transaction.getToAccountId(),
+                transaction.getId(),
+                transaction.getAmount(),
+                transaction.getType().name(),
+                transaction.getCategoryId(),
+                LocalDateTime.of(transaction.getTransactionDate(), LocalTime.MIDNIGHT)
+        );
+
         transactionRepository.delete(transaction);
+        deletedEventPublisher.publish(event);
     }
 
     private Transaction getTransaction(Long transactionId) {
